@@ -1,0 +1,5 @@
+Contact: https://togari.jp/theclubtogari/en/#contact
+Contact: tel:+81-269-65-2359
+Expires: 2027-10-27T00:00:00.000Z
+Preferred-Languages: en, ja
+Canonical: https://togari.jp/.well-known/security.txt

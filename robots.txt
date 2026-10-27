@@ -1,0 +1,14 @@
+# THE CLUB TOGARI
+User-agent: *
+Allow: /
+Disallow: /theclubtogari/en/thanks/
+
+# AI crawlers are welcome
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://togari.jp/theclubtogari/en/sitemap.xml
