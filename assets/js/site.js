@@ -4,6 +4,17 @@
   root.classList.add('js');
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Anywhere other than the live domain is a preview: keep it out of search results
+  var isPreview = !/(^|\.)togari\.jp$/.test(location.hostname);
+  if (isPreview) {
+    var noindex = document.createElement('meta');
+    noindex.name = 'robots';
+    noindex.content = 'noindex, nofollow';
+    var existing = document.querySelector('meta[name="robots"]');
+    if (existing) existing.remove();
+    document.head.appendChild(noindex);
+  }
   var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
   var lerp = function (a, b, t) { return a + (b - a) * t; };
   // progress of p within [a, b], clamped to 0..1
@@ -280,6 +291,12 @@
         e.preventDefault();
         e2.setCustomValidity('Email addresses do not match.');
         e2.reportValidity();
+        return;
+      }
+      // Preview hosts (GitHub Pages, local) cannot run contact.php
+      if (isPreview) {
+        e.preventDefault();
+        if (status) status.textContent = 'This is a preview of the new site, so the form is switched off. To enquire, please call +81 269 65 2359.';
         return;
       }
       if (status) status.textContent = 'Sending…';

@@ -1,0 +1,47 @@
+# Publishes a preview to GitHub Pages on every push to main.
+# The site goes under /en/ so the preview URL mirrors the live path
+# (https://<owner>.github.io/theclubtogari/en/ vs https://togari.jp/theclubtogari/en/).
+name: Preview on GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}en/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site/en
+          rsync -a --exclude '.git*' --exclude '.github' --exclude '_site' \
+                --exclude 'README.md' --exclude 'contact.php' --exclude '.htaccess' ./ _site/en/
+          cp 404.html _site/404.html
+          cat > _site/index.html <<'EOF'
+          <!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
+          <meta http-equiv="refresh" content="0; url=en/"><title>THE CLUB TOGARI</title>
+          <a href="en/">THE CLUB TOGARI</a>
+          EOF
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
